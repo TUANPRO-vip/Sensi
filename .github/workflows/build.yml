@@ -8,16 +8,87 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-
-      - name: Tim thu muc project
+      - name: Tao project tu workflow
         run: |
-          S=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
-          if [ -z "$S" ]; then
-            { echo '### LOI: khong tim thay settings.gradle trong repo'; echo '```'; find . -not -path './.git/*' | head -50; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          echo "PROJECT_DIR=$(dirname "$S")" >> "$GITHUB_ENV"
+          base64 -d <<'B64' | tar xz -C "$GITHUB_WORKSPACE"
+          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
+          B64
+          ls -R "$GITHUB_WORKSPACE/tsx_tuner" | head -40
 
       - uses: actions/setup-java@v5
         with:
@@ -31,7 +102,7 @@ jobs:
           gradle-version: '8.7'
 
       - name: Build APK
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: tsx_tuner
         run: |
           set +e
           gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1
@@ -42,5 +113,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: TSX-Tuner-apk
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
+          path: tsx_tuner/app/build/outputs/apk/debug/app-debug.apk
           
