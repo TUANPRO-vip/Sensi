@@ -2,19 +2,45 @@ name: Build APK
 on:
   push:
   workflow_dispatch:
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: '17' }
+      - uses: actions/checkout@v5
+
+      - name: Tim thu muc project
+        run: |
+          S=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
+          if [ -z "$S" ]; then
+            { echo '### LOI: khong tim thay settings.gradle trong repo'; echo '```'; find . -not -path './.git/*' | head -50; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "PROJECT_DIR=$(dirname "$S")" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - uses: android-actions/setup-android@v3
+
       - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: '8.7' }
-      - run: gradle assembleDebug --no-daemon
+        with:
+          gradle-version: '8.7'
+
+      - name: Build APK
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          set +e
+          gradle assembleDebug --no-daemon --stacktrace > build.log 2>&1
+          code=$?
+          { echo '### Build log (60 dong cuoi)'; echo '```'; tail -n 60 build.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $code
+
       - uses: actions/upload-artifact@v4
         with:
           name: TSX-Tuner-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
           
